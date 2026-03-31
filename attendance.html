@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attendance</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>EMS</h2>
+    <ul>
+        <li><a href="index.html">Dashboard</a></li>
+        <li><a href="employees.html">Employee List</a></li>
+        <li><a href="attendance.html">Attendance</a></li>
+        <li><a href="leave.html">Leave Requests</a></li>
+        <li><a href="reports.html">Reports</a></li>
+        <li><a href="settings.html">Settings</a></li>
+    </ul>
+</div>
+
+<div class="main">
+
+    <div class="topbar">
+        <h2>Employee Management System</h2>
+    </div>
+
+    <h3>Attendance 📅</h3>
+
+    <div class="panel">
+        <h4>Mark Attendance</h4>
+
+        <input id="name" placeholder="Employee Name">
+        <select id="status">
+            <option value="Present">Present</option>
+            <option value="Absent">Absent</option>
+        </select>
+        <input id="date" type="date">
+
+        <button onclick="addAttendance()">Submit</button>
+    </div>
+
+    <div class="panel">
+        <h4>Attendance Records</h4>
+
+        <table border="1" width="100%">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="attendanceTable"></tbody>
+        </table>
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <h2>EMS</h2>
+    <ul>
+        <li><a href="index.html">Dashboard</a></li>
+        <li><a href="employees.html">Employee List</a></li>
+        <li><a href="attendance.html">Attendance</a></li>
+        <li><a href="leave.html">Leave Requests</a></li>
+        <li><a href="reports.html">Reports</a></li>
+        <li><a href="settings.html">Settings</a></li>
+    </ul>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+        <h2>Employee Management System</h2>
+        <div class="menu">
+            <a href="index.html">Dashboard</a>
+            <a href="reports.html">Reports</a>
+            <a href="settings.html">Settings</a>
+            <a href="login.html">Logout</a>
+        </div>
+    </div>
+
+    <!-- Page Title -->
+    <h3>Employee List 👨‍💼</h3>
+
+    <!-- Add Employee Form -->
+    <div class="panel">
+        <h4>Add New Employee</h4>
+
+        <input id="empName" placeholder="Enter Name">
+        <input id="empEmail" placeholder="Enter Email">
+
+        <button onclick="addEmployee()">Add Employee</button>
+    </div>
+
+    <!-- Employee Table -->
+    <div class="panel">
+        <h4>All Employees</h4>
+
+        <table border="1" width="100%">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="employeeTable">
+                <!-- Data from backend -->
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- JavaScript -->
+<script src="script.js"></script>
+
+</body>
+</html>

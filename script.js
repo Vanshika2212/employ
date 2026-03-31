@@ -1,72 +1,211 @@
-// Sample data
-let employees = [
-    { id: 'EMP001', name: 'John Doe', email: 'john@example.com', dept: 'IT', phone: '+1234567890', status: 'Active' },
-    { id: 'EMP002', name: 'Jane Smith', email: 'jane@example.com', dept: 'HR', phone: '+1234567891', status: 'Active' },
-    { id: 'EMP003', name: 'Mike Johnson', email: 'mike@example.com', dept: 'Finance', phone: '+1234567892', status: 'Active' },
-    { id: 'EMP004', name: 'Sarah Wilson', email: 'sarah@example.com', dept: 'IT', phone: '+1234567893', status: 'Active' },
-];
+const API = "http://localhost:8080/api";
 
-let attendanceData = [
-    { id: 'EMP001', name: 'John Doe', dept: 'IT', checkIn: '09:00 AM', checkOut: '06:00 PM', status: 'present' },
-    { id: 'EMP002', name: 'Jane Smith', dept: 'HR', checkIn: '09:15 AM', checkOut: '', status: 'late' },
-    { id: 'EMP003', name: 'Mike Johnson', dept: 'Finance', checkIn: '', checkOut: '', status: 'absent' },
-    { id: 'EMP004', name: 'Sarah Wilson', dept: 'IT', checkIn: '08:45 AM', checkOut: '05:30 PM', status: 'present' },
-];
+// ================= LOAD DASHBOARD DATA =================
 
-// DOM elements
-const attendanceTableBody = document.getElementById('attendanceTableBody');
-const employeesTableBody = document.getElementById('employeesTableBody');
+async function loadDashboard() {
+    try {
+        const res = await fetch(API + "/attendance");
+        const data = await res.json();
 
-// Initialize app
-document.addEventListener('DOMContentLoaded', function() {
-    updateStats();
-    renderAttendanceTable();
-    renderEmployeesTable();
-    setupTabs();
-    setupEmployeeForm();
-    initChart();
-});
+        // Update cards
+        document.getElementById("totalEmployees").innerText = data.length;
 
-// Tab functionality
-function setupTabs() {
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
+        let present = data.filter(a => a.status === "Present").length;
+        document.getElementById("presentToday").innerText = present;
 
-    tabBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const targetTab = btn.dataset.tab;
+        document.getElementById("pendingLeave").innerText = "--"; // future
+        document.getElementById("tasks").innerText = "--";
 
-            // Update active tab button
-            tabBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+        // Activity list
+        const activityList = document.getElementById("activityList");
+        if (activityList) {
+            activityList.innerHTML = "";
 
-            // Update active tab content
-            tabContents.forEach(content => content.classList.remove('active'));
-            document.getElementById(targetTab).classList.add('active');
+            data.slice(-5).forEach(a => {
+                activityList.innerHTML += `
+                    <li>${a.employeeName} marked ${a.status}</li>
+                `;
+            });
+        }
+
+    } catch (error) {
+        console.error("Error loading dashboard:", error);
+    }
+}
+
+// ================= LOAD ATTENDANCE =================
+
+async function loadAttendance() {
+    try {
+        const res = await fetch(API + "/attendance");
+        const data = await res.json();
+
+        const table = document.getElementById("attendanceTable");
+        if (!table) return;
+
+        table.innerHTML = "";
+
+        data.forEach(a => {
+            table.innerHTML += `
+                <tr>
+                    <td>${a.employeeName}</td>
+                    <td>${a.status}</td>
+                    <td>${a.date}</td>
+                    <td>
+                        <button onclick="deleteAttendance(${a.id})">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
         });
+
+    } catch (error) {
+        console.error("Error loading attendance:", error);
+    }
+}
+
+// ================= ADD ATTENDANCE =================
+
+async function addAttendance() {
+    const name = document.getElementById("name").value;
+    const status = document.getElementById("status").value;
+    const date = document.getElementById("date").value;
+
+    try {
+        await fetch(API + "/attendance", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                employeeName: name,
+                status: status,
+                date: date
+            })
+        });
+
+        alert("Attendance Added ✅");
+        loadAttendance();
+
+    } catch (error) {
+        console.error("Error adding attendance:", error);
+    }
+}
+
+// ================= DELETE ATTENDANCE =================
+
+async function deleteAttendance(id) {
+    try {
+        await fetch(API + "/attendance/" + id, {
+            method: "DELETE"
+        });
+
+        loadAttendance();
+
+    } catch (error) {
+        console.error("Error deleting:", error);
+    }
+}
+
+// ================= LOGIN =================
+
+async function login() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    try {
+        const res = await fetch(API + "/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ username, password })
+        });
+
+        const result = await res.text();
+
+        if (result === "SUCCESS") {
+            localStorage.setItem("loggedIn", "true");
+            window.location.href = "index.html";
+        } else {
+            alert("Invalid credentials ❌");
+        }
+
+    } catch (error) {
+        console.error("Login error:", error);
+    }
+}
+
+// ================= LOGOUT =================
+
+function logout() {
+    localStorage.removeItem("loggedIn");
+    window.location.href = "login.html";
+}
+
+// ================= PAGE LOAD HANDLER =================
+
+// Run functions based on page
+window.onload = () => {
+
+    // Dashboard page
+    if (document.getElementById("totalEmployees")) {
+        loadDashboard();
+    }
+
+    // Attendance page
+    if (document.getElementById("attendanceTable")) {
+        loadAttendance();
+    }
+} ;
+window.onload = () => {
+
+    // Dashboard page
+    if (document.getElementById("totalEmployees")) {
+        loadDashboard();
+    }
+
+    // Attendance page
+    if (document.getElementById("attendanceTable")) {
+        loadAttendance();
+    }
+
+    // Employee page
+    if (document.getElementById("employeeTable")) {
+        loadEmployees();
+    }
+};
+async function loadEmployees() {
+    try {
+        const res = await fetch("http://localhost:8080/api/employees");
+        const data = await res.json();
+
+        const table = document.getElementById("employeeTable");
+        table.innerHTML = "";
+
+        data.forEach(emp => {
+            table.innerHTML += `
+                <tr>
+                    <td>${emp.name}</td>
+                    <td>${emp.email}</td>
+                    <td>
+                        <button onclick="deleteEmployee(${emp.id})">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+    } catch (error) {
+        console.error("Error loading employees:", error);
+    }
+}
+async function deleteEmployee(id) {
+    await fetch("http://localhost:8080/api/employees/" + id, {
+        method: "DELETE"
     });
+
+    loadEmployees();
 }
-
-// Update dashboard stats
-function updateStats() {
-    const presentCount = attendanceData.filter(emp => emp.status === 'present').length;
-    const absentCount = attendanceData.filter(emp => emp.status === 'absent').length;
-    const lateCount = attendanceData.filter(emp => emp.status === 'late').length;
-    const totalEmployees = employees.length;
-
-    document.getElementById('presentCount').textContent = presentCount;
-    document.getElementById('absentCount').textContent = absentCount;
-    document.getElementById('lateCount').textContent = lateCount;
-    document.getElementById('totalEmployees').textContent = totalEmployees;
-}
-
-// Render attendance table
-function renderAttendanceTable() {
-    attendanceTableBody.innerHTML = attendanceData.map(emp => `
-        <tr>
-            <td>${emp.id}</td>
-            <td>${emp.name}</td>
-            <td>${emp.dept}</td>
-            <td>${emp.checkIn || '-'}</td>
-            <td>${emp.checkOut || '-'}</td>
-            <td><span class="status ${emp
