@@ -1,94 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Employee Attendance System</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<!-- 🔐 LOGIN PROTECTION -->
+<script>
+  if (!localStorage.getItem("loggedIn")) {
+    window.location.href = "login.html";
+  }
+</script>
 
-<!-- Sidebar -->
+<!-- SIDEBAR -->
 <div class="sidebar">
-<h1>EMPLOYEE ATTENDANCE</h1>h1>
-    <h2>EMS</h2>
-    <ul>
-        <li><a href="index.html">Dashboard</a></li>
-        <li><a href="employees.html">Employee List</a></li>
-        <li><a href="attendance.html">Attendance</a></li>
-        <li><a href="leave.html">Leave Requests</a></li>
-        <li><a href="reports.html">Reports</a></li>
-        <li><a href="settings.html">Settings</a></li>
-    </ul>
+  <h2>EMS</h2>
+  <ul>
+    <li onclick="showSection('dashboard')">Dashboard</li>
+    <li onclick="showSection('employees')">Employee List</li>
+    <li onclick="showSection('attendance')">Attendance</li>
+    <li onclick="showSection('leave')">Leave Requests</li>
+    <li onclick="showSection('reports')">Reports</li>
+    <li onclick="showSection('settings')">Settings</li>
+  </ul>
 </div>
 
-<!-- Main Content -->
-<div class="main content">
+<!-- MAIN -->
+<div class="main">
 
-    <!-- Topbar -->
-    <div class="topbar">
-        <h2>Employee Management System</h2>
-        <div class="menu">
-            <a href="index.html">Dashboard</a>
-            <a href="reports.html">Reports</a>
-            <a href="settings.html">Settings</a>
-            <a href="login.html">Logout</a>
-        </div>
+<!-- DASHBOARD -->
+<section id="dashboard" class="section active">
+  <div class="hero">
+    <div class="overlay">
+      <h1>EMPLOYEE ATTENDANCE SYSTEM</h1>
+      <p>Manage everything in one place</p>
     </div>
+  </div>
 
-    <!-- Page Content -->
-    <h3>Welcome, Admin 👋</h3>
+  <div class="dashboard-content">
+    <h2>Welcome Admin 👋</h2>
+    <p>This is your control panel.</p>
+  </div>
 
-    <!-- Cards -->
-    <div class="cards">
-        <div class="card">
-            <h4>Total Employees</h4>
-            <h1 id="totalEmployees">--</h1>
-        </div>
-        <div class="card">
-            <h4>Present Today</h4>
-            <h1 id="presentToday">--</h1>
-        </div>
-        <div class="card">
-            <h4>Pending Leave</h4>
-            <h1 id="pendingLeave">--</h1>
-        </div>
-        <div class="card">
-            <h4>Tasks</h4>
-            <h1 id="tasks">--</h1>
-        </div>
+  <!-- CARDS -->
+  <div class="cards">
+    <div class="card">
+      <h3>Total Employees</h3>
+      <p id="totalEmp">0</p>
     </div>
-
-    <!-- Panels -->
-    <div class="panels">
-
-        <div class="panel">
-            <h4>Recent Activities</h4>
-            <ul id="activityList">
-                <!-- Data from backend -->
-            </ul>
-        </div>
-
-        <div class="panel">
-            <h4>Upcoming Holidays</h4>
-            <div id="holidayList">
-                <!-- Backend data -->
-            </div>
-        </div>
-
+    <div class="card">
+      <h3>Present Today</h3>
+      <p id="presentEmp">0</p>
     </div>
-
-    <!-- Quick Actions -->
-    <div class="actions">
-        <button onclick="location.href='employees.html'">Add Employee</button>
-        <button onclick="location.href='attendance.html'">Manage Attendance</button>
-        <button onclick="location.href='leave.html'">Approve Leave</button>
-        <button onclick="location.href='reports.html'">View Reports</button>
+    <div class="card">
+      <h3>Pending Leaves</h3>
+      <p id="pendingLeave">2</p>
     </div>
+    <div class="card">
+      <h3>Tasks</h3>
+      <p id="tasks">5</p>
+    </div>
+  </div>
+</section>
+
+<!-- EMPLOYEES -->
+<section id="employees" class="section">
+  <h2>Employee List</h2>
+
+  <form id="empForm">
+    <input type="text" id="empName" placeholder="Name" required>
+    <input type="text" id="empRole" placeholder="Role" required>
+    <button>Add</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="empTable"></tbody>
+  </table>
+</section>
+
+<!-- ATTENDANCE -->
+<section id="attendance" class="section">
+  <h2>Attendance</h2>
+  <button onclick="markAttendance()">Mark Present</button>
+  <ul id="attendanceList"></ul>
+</section>
+
+<!-- LEAVE -->
+<section id="leave" class="section">
+  <h2>Leave Requests</h2>
+  <textarea placeholder="Write request..."></textarea>
+  <button>Submit</button>
+</section>
+
+<!-- REPORTS -->
+<section id="reports" class="section">
+  <h2>Reports</h2>
+</section>
+
+<!-- SETTINGS -->
+<section id="settings" class="section">
+  <h2>Settings</h2>
+</section>
 
 </div>
 
-<!-- ✅ VERY IMPORTANT: JS FILE -->
 <script src="script.js"></script>
-
 </body>
 </html>
